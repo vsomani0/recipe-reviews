@@ -1,0 +1,4 @@
+remote_theme: https://pages-themes.github.io/leap-day/
+
+plugins:
+  - jekyll-remote-theme
