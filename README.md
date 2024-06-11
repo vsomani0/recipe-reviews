@@ -65,8 +65,27 @@ Note: In extremely rare cases, a recipe was submitted after a review of it accor
 6) Created a column for average rating by recipe \
 Helpful piece of information for the prediction later.
 
+Next, I explored the data, and found these 3 interesting images.
 
+<iframe
+  src="assets/number_of_reviews_by_year.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
 
+This shows the popularity of food.com reviews -- but it's important to note that this is not all of them, just the ones that were scraped. Still, it's a good indicator to show that food.com is no longer as popular as it once was. 
+
+<iframe
+  src="assets/review_average_by_time_plot.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+This is the review average by time. It stays extremely stable, but later reviews are pronouncedly more negative. This effect becomes more apparent when zooming into the plot (for instance by setting its axes from 4 to 5).
+
+![heaven-aggregate](heaven-agg-screenshot.jpg)
 
 
 
@@ -80,7 +99,7 @@ Helpful piece of information for the prediction later.
 
 ## Final Model
 
-# Fairness Analysis
+## Fairness Analysis
 
 
 
