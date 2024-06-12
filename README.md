@@ -66,7 +66,7 @@ This is how the cleaned dataframe looks:
 <iframe
   src="assets/df-head.png"
   width="550"
-  height="300"
+  height="108"
   frameborder="0"
 ></iframe>
 
@@ -113,7 +113,7 @@ First, let's see if number of steps helps determines whether the column is missi
 <iframe
   src="assets/n_steps_missing.html"
   width="550"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -132,8 +132,8 @@ Let's also see if the missingness of ratings depends on the minutes column. The 
 
 <iframe
   src="assets/review_missing_rating.html"
-  width="500"
-  height="600"
+  width="550"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -153,7 +153,7 @@ Building off the plot earlier when exploring the data, lets test whether the day
 <iframe
   src="assets/review_avg_by_time_plot.html"
   width="550"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -170,7 +170,7 @@ After simulating 10000 samples, we see these values
 <iframe
   src="assets/hyp_test.html"
   width="550"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -216,7 +216,7 @@ I divide the model into a test and a training set (with 80% of the data in the t
 <iframe
   src="assets/validation_r2_baseline.html"
   width="550"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -249,7 +249,7 @@ This is a graph of the data:
 <iframe
   src="assets/fairness.html"
   width="550"
-  height="600"
+  height="400"
   frameborder="0"
 ></iframe>
 
