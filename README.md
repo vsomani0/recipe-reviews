@@ -63,10 +63,12 @@ Note: In extremely rare cases, a recipe was submitted after a review of it accor
 Extremely helpful piece of information for the prediction later.
 
 This is how the cleaned dataframe looks:
-| name                                 |     id |   minutes |   contributor_id | submitted           | tags                                                                                                                                                                                                                        | nutrition                                    |   n_steps | steps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | description                                                                                                                                                                                                                                                          | ingredients                                                                                                                                                                    |   n_ingredients |
-|:-------------------------------------|-------:|----------:|-----------------:|:--------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------|----------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------:|
-| 1 brownies in the world    best ever | 333281 |        40 |           985201 | 2008-10-27 00:00:00 | ['60-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'for-large-groups', 'desserts', 'lunch', 'snacks', 'cookies-and-brownies', 'chocolate', 'bar-cookies', 'brownies', 'number-of-servings'] | [138.4, 10.0, 50.0, 3.0, 3.0, 19.0, 6.0]     |        10 | ['heat the oven to 350f and arrange the rack in the middle', 'line an 8-by-8-inch glass baking dish with aluminum foil', 'combine chocolate and butter in a medium saucepan and cook over medium-low heat , stirring frequently , until evenly melted', 'remove from heat and let cool to room temperature', 'combine eggs , sugar , cocoa powder , vanilla extract , espresso , and salt in a large bowl and briefly stir until just evenly incorporated', 'add cooled chocolate and mix until uniform in color', 'add flour and stir until just incorporated', 'transfer batter to the prepared baking dish', 'bake until a tester inserted in the center of the brownies comes out clean , about 25 to 30 minutes', 'remove from the oven and cool completely before cutting']                                                  | these are the most; chocolatey, moist, rich, dense, fudgy, delicious brownies that you'll ever make.....sereiously! there's no doubt that these will be your fav brownies ever for you can add things to them or make them plain.....either way they're pure heaven! | ['bittersweet chocolate', 'unsalted butter', 'eggs', 'granulated sugar', 'unsweetened cocoa powder', 'vanilla extract', 'brewed espresso', 'kosher salt', 'all-purpose flour'] |               9 |
-| 1 in canada chocolate chip cookies   | 453467 |        45 |          1848091 | 2011-04-11 00:00:00 | ['60-minutes-or-less', 'time-to-make', 'cuisine', 'preparation', 'north-american', 'for-large-groups', 'canadian', 'british-columbian', 'number-of-servings']                                                               | [595.1, 46.0, 211.0, 22.0, 13.0, 51.0, 26.0] |        12 | ['pre-heat oven the 350 degrees f', 'in a mixing bowl , sift together the flours and baking powder', 'set aside', 'in another mixing bowl , blend together the sugars , margarine , and salt until light and fluffy', 'add the eggs , water , and vanilla to the margarine / sugar mixture and mix together until well combined', 'add in the flour mixture to the wet ingredients and blend until combined', 'scrape down the sides of the bowl and add the chocolate chips', 'mix until combined', 'scrape down the sides to the bowl again', 'using an ice cream scoop , scoop evenly rounded balls of dough and place of cookie sheet about 1 - 2 inches apart to allow for spreading during baking', 'bake for 10 - 15 minutes or until golden brown on the outside and soft & chewy in the center', 'serve hot and enjoy !'] | this is the recipe that we use at my school cafeteria for chocolate chip cookies. they must be the best chocolate chip cookies i have ever had! if you don't have margarine or don't like it, then just use butter (softened) instead.                               | ['white sugar', 'brown sugar', 'salt', 'margarine', 'eggs', 'vanilla', 'water', 'all-purpose flour', 'whole wheat flour', 'baking soda', 'chocolate chips']                    |              11 |   |              11 |
+<iframe
+  src="assets/df-head.png"
+  width="500"
+  height="300"
+  frameborder="0"
+></iframe>
 
 ### Exploratory Data Analysis
 
@@ -74,7 +76,7 @@ I found several interesting visuals, including these ones:
 
 <iframe
   src="assets/number_of_reviews_by_year.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
@@ -83,7 +85,7 @@ This shows the popularity of food.com reviews since 2008, and these peaked at ar
 
 <iframe
   src="assets/review_avg_by_time_plot.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
@@ -110,7 +112,7 @@ First, let's see if number of steps helps determines whether the column is missi
 
 <iframe
   src="assets/n_steps_missing.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
@@ -130,7 +132,7 @@ Let's also see if the missingness of ratings depends on the minutes column. The 
 
 <iframe
   src="assets/review_missing_rating.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
@@ -150,7 +152,7 @@ We get a p-value of 0.12, which is lower than the threshold. Thus, we fail to re
 Building off the plot earlier when exploring the data, lets test whether the days after a recipe is submitted affects the actual score of the review.
 <iframe
   src="assets/review_avg_by_time_plot.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
@@ -167,7 +169,7 @@ After simulating 10000 samples, we see these values
 
 <iframe
   src="assets/hyp_test.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
@@ -244,7 +246,7 @@ This is a graph of the data:
 
 <iframe
   src="assets/fairness.html"
-  width="750"
+  width="500"
   height="600"
   frameborder="0"
 ></iframe>
