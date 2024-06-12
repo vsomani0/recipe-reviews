@@ -188,18 +188,17 @@ I ensure that only variables known at the time of a recipe's submission can be u
 
 ## Baseline Model
 
-For the baseline model, I rely heavily on intuition rather than testing a number of different combinations out in order to give a general gist of how good the model can be. More complicated feature creation, hyperparameter tuning, etc. will be done in the final model. Our biggest asset in prediction is the text that we have for each recipe -- in its ingredients information, recipe title, and recipe description. We will use the bag of words encoding (which can be effective for small strings like ingredients). It can give really large amounts of features with a lot of unique words, which can potentially cause overfitting. There are other ways to reduce the number of features, I won't use the description column yet.
+For the baseline model, I rely heavily on intuition rather than testing a number of different combinations out in order to give a general gist of how good the model can be. More complicated feature creation, hyperparameter tuning, etc. will be done in the final model. Our biggest asset in prediction is the text that we have for each recipe -- in its ingredients information, recipe title, and recipe description. We will use the bag of words encoding (which can be effective for small strings like ingredients). It can give really large amounts of features with a lot of unique words, which can potentially cause overfitting. In order to reduce the number of features, I won't use the description or title columns in the model yet.
 
 In sklearn, the CountVectorizer class makes word comparison a lot easier for us. It automatically ensures all data is lowercase, and splits by punctuation. I will store these all as 1-grams (to just store the words) for the baseline. These are my features:
 
 | Feature Name | Type
 |:-------------------------------|---------------------:|
-| Words in Title | Categorical Nominal
-| Words in Ingredients | Categorical Nominal
+| Words in Ingredients | Categorical Nominal |
 | Days After 2008 | Quantitative Discrete |
 | Minutes of Cooking Time| Quantitative Discrete |
 
-Note that times are typically continuous -- but these are stored as discrete variables in this case. The scraper only finds days, so Days After 2008 is technically discrete. Additionally, food.com only asks users to specify minutes without decimals, so it is also discrete.
+Note that times are typically continuous, but in this case they are discrete. The scraper only finds days, so Days After 2008 is technically discrete. Additionally, food.com only asks users to specify minutes without decimals, so it is also discrete.
 
 In this case, a tree-based model would be nice since the heavy amount of text data makes having interaction terms (or a combination of words) more important. Tree-based models are non-parametric, and can therefore, fit this really well. I will use the random forest regressor to counteract the overfitting of having too many columns.
 
@@ -207,13 +206,13 @@ I divide the model into a test and a training set (with 80% of the data in the t
 
 |   Max Depth |   Training R^2 |   Validation R^2 |
 |------------:|---------------:|-----------------:|
-|           3 |         0.1156 |           0.006  |
-|           5 |         0.1649 |           0.0094 |
-|           7 |         0.2059 |           0.013  |
-|          10 |         0.2604 |           0.0189 |
-|          13 |         0.3093 |           0.0238 |
-|          15 |         0.3385 |           0.0266 |
-|          20 |         0.4001 |           0.031  |
+|           3 |         0.1009 |           0.0067 |
+|           5 |         0.1481 |           0.0107 |
+|           7 |         0.1881 |           0.017  |
+|          10 |         0.2376 |           0.0194 |
+|          13 |         0.2754 |           0.0209 |
+|          15 |         0.2971 |           0.0217 |
+|          20 |         0.3423 |           0.0203 |
 
 <iframe
   src="assets/validation_r2_baseline.html"
@@ -222,11 +221,17 @@ I divide the model into a test and a training set (with 80% of the data in the t
   frameborder="0"
 ></iframe>
 
-Clearly, a depth of 20 gives the best validation error, so I end up using it. The model is overfitting substantially. However, interestingly, it has a test R^2 of 0.106, which is actually substantially better than the cross-validation error. This is likely because we have more data available to us (since all of the training data is used on every iteration) -- which is particularly useful in high-variance cases like this one. In the final model, I explore how to reduce this overfitting
+A depth of 15 gives the best validation error, so I end up using it. The model is overfitting substantially. However, interestingly, it has a test R^2 of 0.0587, which is actually substantially better than the cross-validation error. This is likely because we have more data available to us (since all of the training data is used on every iteration) -- which is particularly useful in high-variance cases like this one. In the final model, I explore how to reduce this overfitting
 
 ## Final Model
 
+Let's start by engineering some features. I will, first, go back to the reviews dataset and create a feature for the previous reviews of the recipe creator. It is likely that recipe creators who are more experienced and have been viewed more positively in the past are viewed more positively in the future.
 
+Let's use the countvectorizer to encode the title in this, too. In order to not get overloaded with having too many features, let's only consider words which occur a certain amount of times -- which we can tune. Additionally, in the title, I remove common words like "the", which don't convey additional information.
+
+Let's also encode ingredients in a different, likely better way, by encoding the full ingredient -- rather than just a part of it. This allows more direct comparisons (for instance, black beans only gets compared to other black beans, and not other black items as well as other beans). In order to not get too many features, I again set a minimum occurences to not have the model consider extremely uncommon or mispelled ingredients.
+
+Including these features along with time and minutes, and continuing with random forests led to the best validation results. Therefore, I ended up using them. I got a  higher test R^2 (0.0636) than the baseline model (0.0587), which indicates that the method generalizes better to unseen data. This improvement is likely because I included the reviewer's previous mean and counts, which are useful pieces of information, along with the title -- something that reviewers definitely check. Since I added these useful pieces of information and kept the number of features about the same by setting min_df, I was likely able to reduce bias, but keep variance about the same. This improved the model. In fact, the training R^2 increased -- which indicates that the new model did, indeed, reduce the bias.
 
 ## Fairness Analysis
 
