@@ -106,9 +106,9 @@ Not Missing at Random (NMAR) or Missing Not at Random (MNAR) means that a column
 
 ### Permutation Testing for MAR
 
-We use permutation testing to determine if a column is MAR (missing at random), which counter to its name, implies that a column's missingness depends on other columns. Typically, we use permutation tests to determine whether a column is MAR or not.
+We use permutation testing to determine if a column is MAR (missing at random), which counter to its name, implies that a column's missingness depends on other columns. Typically, we use permutation tests to determine whether a column is MAR or not. Rating is a column with a more non-trivial missingness to analyze.
 
-First, let's see if number of steps helps determines whether the column is missing. In order to do so, we run a permutation test. Let's see a histogram.
+First, let's see if number of steps helps determines whether rating is missing. In order to do so, we run a permutation test.
 
 <iframe
   src="assets/n_steps_missing.html"
@@ -120,13 +120,14 @@ First, let's see if number of steps helps determines whether the column is missi
 These distributions look a little different -- specifically rating missing seems to have slightly higher values for minutes, especially in the extreme. The K-S test statistic, which computes the largest difference within the CDFs of the two distributions is my test statistic to see if the distributions came from the same population. Its worth noting that the K-S statistic does not tell us if one is greater than others -- just whether the distribution comes from the same population.
 
 Let's run a permutation test with these settings
+
 **Alpha**: 0.01 
 
 **Null Hypothesis**: Distribution of number of steps for missing ratings is the same as distribution of number of steps for non-missing ratings. 
 
 **Alternate Hypothesis**: Distribution of number of steps for missing ratings is different than distribution of number of steps for non-missing ratings.
 
-After running a ks statistic, we get a p-value of 10^(-49), which is extremely low. We reject the null hypothesis for the alternate hypothesis. 
+After running a ks statistic test, we get a p-value of 10^(-49), which is extremely low. We **reject* the null hypothesis for the alternate hypothesis and conclude that number of steps does impact the missingness of rating. Still, this is not a guarantee -- we might have just gotten strange luck. 
 
 Let's also see if the missingness of ratings depends on the minutes column. The minutes dataframe is self-reported, so there are lots of outlier values. I filtered out everything above 50 minutes to make it easier to visualize
 
@@ -145,7 +146,7 @@ Seems like columns with rating missing have higher minutes on average. Let's try
 
 **Alternate Hypothesis**: Mean of number of minutes for missing ratings is different than distribution of number of steps for non-missing ratings.
 
-We get a p-value of 0.12, which is lower than the threshold. Thus, we fail to reject the null hypothesis, and conclude that minutes may not affect the missingness of ratings. Even though we did not conclude that rating is missing based on chance, it still is considered MAR, because it is dependent on the number of steps.
+We get a p-value of 0.12, which is lower than the threshold. Thus, we **fail to reject** the null hypothesis, and conclude that minutes may not affect the missingness of ratings. Even though we did not conclude that rating is missing based on chance, it still is considered MAR, because it is dependent on the number of steps.
 
 ## Hypothesis Testing
 
@@ -157,7 +158,7 @@ Building off the plot earlier when exploring the data, lets test whether the day
   frameborder="0"
 ></iframe>
 
-Let's test whether the reviews after a certain point of the recipe being submitted have significantly lower mean ratings. Here, let's use a cutoff of 3 years after the recipe submission to see if there's a difference, based off the graph made previously. I have 'sliced up' this data by using the data to generate the hypothesis. To counteract this, I will require more evidence in order to reject the null hypothesis. 
+Let's test whether the reviews after a certain point of the recipe being submitted have significantly lower mean ratings. Here, let's use a cutoff of 3 years after the recipe submission to see if there's a difference, based off the graph made previously. I have 'sliced up' this data by using the data to generate the hypothesis. To counteract this, I will require more evidence in order to reject the null hypothesis, so I will set a lower alpha threshold. 
 
 **Alpha**: 0.001 
 
@@ -177,7 +178,7 @@ After simulating 10000 samples, we see these values
 Clearly, the value we observed is far greater than what we see by chance alone. The simulated statistics are all on the left and the observed statistic is much larger. It should no surprise that we get a p-value of 0 when running the test, indicating that none of the 10000 simulated statistics was as or more extreme than the observed value. Therefore, we reject the null hypothesis in favor of the alternate. Thus, we conclude that later reviews likely have a different true mean than the alternate hypothesis. Again, it is theoretically possible that this value did arise by chance alone.
 
 ## Framing a Prediction Problem
-Let's dive deeper into analyzing review behavior, this time trying to see if we can predict the average review rating based on the recipe with at least 8 reviews via regression. The average review rating is potentially misleading, since review ratings are ordinal variables -- and I treat them as quantitative. However, it is the most reasonable way to aggregate review ratings, so I will use it.
+Let's dive deeper into analyzing review behavior, this time trying to see if we can predict the average review rating based on the recipe with at least 8 reviews via regression. The average review rating is potentially misleading, since review ratings are ordinal variables -- and I encode them as quantitative. However, it is the most reasonable way to aggregate review ratings, so I will use it.
 
 The average rating is invaluable to estimate. It can, for instance, greatly help an algorithm choose which products will be better liked and recommend those products more. However, it will likely pose a big challenge since predicting the quality of a recipe based largely on the text of its review and its title seems very difficult.
 
@@ -199,7 +200,7 @@ In sklearn, the CountVectorizer class makes word comparison a lot easier for us.
 
 Note that times are typically continuous, but in this case they are discrete. The scraper only finds days, so Days After 2008 is technically discrete. Additionally, food.com only asks users to specify minutes without decimals, so it is also discrete.
 
-In this case, a tree-based model would be nice since the heavy amount of text data makes having interaction terms (or a combination of words) more important. Tree-based models are non-parametric, and can therefore, fit this really well. I will use the random forest regressor to counteract the overfitting of having too many columns.
+In this case, a tree-based model would be nice since the heavy amount of text data makes having interaction terms (or a combination of words) more important. Tree-based models are non-parametric, and can therefore, fit these complex patterns well. I will use the random forest regressor to both use a tree based predictor, but also not overfit as a result of having too many columns.
 
 I divide the model into a test and a training set (with 80% of the data in the training set). After fitting the model, I have the opportunity to do some simple hyperparameter tuning of the model. For the baseline, I will only tune the max_depth, and compute the cross-validation error. Here are the R^2 values:
 
@@ -220,19 +221,25 @@ I divide the model into a test and a training set (with 80% of the data in the t
   frameborder="0"
 ></iframe>
 
-A depth of 15 gives the best validation error, so I end up using it. The model is overfitting substantially. However, interestingly, it has a test R^2 of 0.0587, which is actually substantially better than the cross-validation error. This is likely because we have more data available to us (since all of the training data is used on every iteration) -- which is particularly useful in high-variance cases like this one. In the final model, I explore how to reduce this overfitting
+A depth of 15 gives the best validation error, so I end up using it. The model is overfitting substantially. However, interestingly, it has a test R^2 of 0.0587. This means that it's about 5.87% better than a model that just uses chance, which is pretty good for a baseline model since reviews are really hard to predict. Additionally, its test error is actually substantially better than the cross-validation error. This is potentially because we have more data available to us (since all of the training data is used on every iteration) -- which is particularly useful in high-variance cases like this one. In the final model, I explore how to reduce this overfitting.
 
 ## Final Model
 
 Let's start by engineering some features. I will, first, go back to the reviews dataset and create a feature for the previous reviews of the recipe creator. It is likely that recipe creators who are more experienced and have been viewed more positively in the past are viewed more positively in the future.
 
-Let's use the countvectorizer to encode the title in this, too. In order to not get overloaded with having too many features, let's only consider words which occur a certain amount of times -- which we can tune. Additionally, in the title, I remove common words like "the", which don't convey additional information.
+Let's also encode the title in this using bag of words. In order to not get overloaded with having too many features, let's only consider words which occur a certain amount of times -- which we can change with hyperparameter tuning. Additionally, in the title, I remove common words like "the", which don't convey additional information.
 
 Let's also encode ingredients in a different, likely better way, by encoding the full ingredient -- rather than just a part of it. This allows more direct comparisons (for instance, black beans only gets compared to other black beans, and not other black items as well as other beans). In order to not get too many features, I again set a minimum occurences to not have the model consider extremely uncommon or mispelled ingredients.
 
-Including these features along with time and minutes, and continuing with random forests led to the best validation results. Therefore, I ended up using them. I got a  higher test R^2 (0.0636) than the baseline model (0.0587), which indicates that the method generalizes better to unseen data. This improvement is likely because I included the reviewer's previous mean and counts, which are useful pieces of information, along with the title -- something that reviewers definitely check. Since I added these useful pieces of information and kept the number of features about the same by setting min_df, I was likely able to reduce bias, but keep variance about the same. This improved the model. In fact, the training R-Squared increased -- which indicates that the new model did, indeed, reduce the bias.
+Including these features along with time and minutes, and continuing with random forests led to the best validation results. I searched through several combinations of the number of minimum word occurences in title and ingredients (min_df).
 
-However, an R-Squared of 0.0636 is not seemingly impressive. It means that this model did only 6.3% better than a model that predicted the mean review every time. A lot of this is unsurprising: attempting to understand how good a recipe is based largely on the words inputted is not easy, and our model should struggle. In the future, more sophisticated word-processing like NLP may improve prediction accuracies.
+{'minimum word occurences in title': 20,
+ 'minimum word occurences in ingredients': 20,
+ 'random forests max depth': 15}
+
+Using these, I got a  higher test R^2 (0.0636) than the baseline model (0.0587), which indicates that the method generalizes better to unseen data. This improvement is likely because I included the reviewer's previous mean and counts, which are useful pieces of information, along with the title -- something that reviewers definitely check. Since I added these useful pieces of information and kept the number of features about the same by setting min_df, I was likely able to reduce bias, but keep variance about the same. This improved the model. In fact, the training R-Squared increased -- which indicates that the new model did, indeed, reduce the bias.
+
+An R-Squared of 0.0636 is not seemingly impressive. It means that this model did only 6.4% better than a model that predicted the mean review every time. A lot of this is because of the difficulty of this prediction: attempting to understand how good a recipe is based largely on the words inputted is not easy. The model should struggle. In the future, more sophisticated word-processing like NLP may improve prediction accuracies, since it can encode the meanings of words alongside whether a word exists.
 
 ## Fairness Analysis
 
