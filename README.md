@@ -74,8 +74,8 @@ I found several interesting visuals, including these ones:
 
 <iframe
   src="assets/number_of_reviews_by_year.html"
-  width="1000"
-  height="1000"
+  width="750"
+  height="600"
   frameborder="0"
 ></iframe>
 
@@ -83,8 +83,8 @@ This shows the popularity of food.com reviews since 2008, and these peaked at ar
 
 <iframe
   src="assets/review_avg_by_time_plot.html"
-  width="1000"
-  height="1000"
+  width="750"
+  height="600"
   frameborder="0"
 ></iframe>
 
@@ -110,8 +110,8 @@ First, let's see if number of steps helps determines whether the column is missi
 
 <iframe
   src="assets/n_steps_missing.html"
-  width="1000"
-  height="1000"
+  width="750"
+  height="600"
   frameborder="0"
 ></iframe>
 
@@ -130,8 +130,8 @@ Let's also see if the missingness of ratings depends on the minutes column. The 
 
 <iframe
   src="assets/review_missing_rating.html"
-  width="1000"
-  height="1000"
+  width="750"
+  height="600"
   frameborder="0"
 ></iframe>
 
@@ -150,8 +150,8 @@ We get a p-value of 0.12, which is lower than the threshold. Thus, we fail to re
 Building off the plot earlier when exploring the data, lets test whether the days after a recipe is submitted affects the actual score of the review.
 <iframe
   src="assets/review_avg_by_time_plot.html"
-  width="1000"
-  height="1000"
+  width="750"
+  height="600"
   frameborder="0"
 ></iframe>
 
@@ -167,7 +167,7 @@ After simulating 10000 samples, we see these values
 
 <iframe
   src="assets/hyp_test.html"
-  width="800"
+  width="750"
   height="600"
   frameborder="0"
 ></iframe>
@@ -213,7 +213,7 @@ I divide the model into a test and a training set (with 80% of the data in the t
 
 <iframe
   src="assets/validation_r2_baseline.html"
-  width="800"
+  width="750"
   height="600"
   frameborder="0"
 ></iframe>
@@ -244,7 +244,7 @@ This is a graph of the data:
 
 <iframe
   src="assets/fairness.html"
-  width="800"
+  width="750"
   height="600"
   frameborder="0"
 ></iframe>
