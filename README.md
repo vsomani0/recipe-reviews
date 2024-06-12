@@ -1,5 +1,5 @@
 # Recipe Reviews Data Analysis
-This is an in-progress prediction and an open-ended investigation into the recipes dataset that I'm currently working on for the DSC 80 Final Project at UCSD.
+This is an investigation into understanding and predicting reviews of food recipes. It is a project for DSC 80 (Applications of Data Science). 
 
 ## Introduction
 
@@ -37,30 +37,30 @@ The reviews dataframe has one element for every review since 2008.  In total, it
 
 The first step to almost any data science project is to clean the data and get a feel for the numbers. My first step in doing so was going through every column individually, and ensuring that the values seemed right. 
 
-1) Fill 0 ratings with NA Values 
+1) **Fill 0 ratings with NA Values** 
 
 In the rating column, I saw that our reviews without any ratings were stored as zeroes. Ignoring this might lead to several issues, for instance in us underestimating the average review score of a recipe. 
 
-2) Convert Strings to Lists 
+2) **Convert Strings to Lists**
 
 Several columns, including nutrition, ingredients, and steps are stored as strings. Converting them to a list makes accessing each individual element much easier. 
 
-3) Convert submitted from a string to a datetime 
+3) **Convert submitted from a string to a datetime**
 
 This is really helpful for more convenient timestamp comparisons.
 
-4) Left Merge recipes and reviews by recipe_id 
+4) **Left Merge recipes and reviews by recipe id**
 
 This allows us to see a review by its corresponding recipe, and helps us convert the two datasets into one. A left merge keeps all the recipes, even if they don't have a corresponding review.
 
-5) Add Column for review time after recipe submitted 
+5) **Add Column for review time after recipe submitted** 
 
 The review time after recipe submitted is a crucial element for the hypothesis test, so it's really helpful. 
 
 Note: In extremely rare cases, a recipe was submitted after a review of it according to this dataset -- which should not be possible. I checked food.com, and the same issues held. For fairness, I let these values remain as is.
 
-6) Created a column for average rating by recipe \
-Helpful piece of information for the prediction later.
+6) **Created a column for average rating by recipe** 
+Extremely helpful piece of information for the prediction later.
 
 This is how the cleaned dataframe looks:
 | name                                 |     id |   minutes |   contributor_id | submitted           | tags                                                                                                                                                                                                                        | nutrition                                    |   n_steps | steps                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | description                                                                                                                                                                                                                                                          | ingredients                                                                                                                                                                    |   n_ingredients |
@@ -118,11 +118,11 @@ First, let's see if number of steps helps determines whether the column is missi
 These distributions look a little different -- specifically rating missing seems to have slightly higher values for minutes, especially in the extreme. The K-S test statistic, which computes the largest difference within the CDFs of the two distributions is my test statistic to see if the distributions came from the same population. Its worth noting that the K-S statistic does not tell us if one is greater than others -- just whether the distribution comes from the same population.
 
 Let's run a permutation test with these settings
-Alpha: 0.01 
+**Alpha**: 0.01 
 
-Null Hypothesis: Distribution of number of steps for missing ratings is the same as distribution of number of steps for non-missing ratings. 
+**Null Hypothesis**: Distribution of number of steps for missing ratings is the same as distribution of number of steps for non-missing ratings. 
 
-Alternate Hypothesis: Distribution of number of steps for missing ratings is different than distribution of number of steps for non-missing ratings.
+**Alternate Hypothesis**: Distribution of number of steps for missing ratings is different than distribution of number of steps for non-missing ratings.
 
 After running a ks statistic, we get a p-value of 10^(-49), which is extremely low. We reject the null hypothesis for the alternate hypothesis. 
 
@@ -137,11 +137,11 @@ Let's also see if the missingness of ratings depends on the minutes column. The 
 
 Seems like columns with rating missing have higher minutes on average. Let's try another permutation test, with absolute difference in means as our test statistic this time.
 
-Alpha: 0.01 
+**Alpha**: 0.01 
 
-Null Hypothesis: Distribution of number of minutes for missing ratings is the same as distribution of number of steps for non-missing ratings. 
+**Null Hypothesis**: Distribution of number of minutes for missing ratings is the same as distribution of number of steps for non-missing ratings. 
 
-Alternate Hypothesis: Mean of number of minutes for missing ratings is different than distribution of number of steps for non-missing ratings.
+**Alternate Hypothesis**: Mean of number of minutes for missing ratings is different than distribution of number of steps for non-missing ratings.
 
 We get a p-value of 0.12, which is lower than the threshold. Thus, we fail to reject the null hypothesis, and conclude that minutes may not affect the missingness of ratings. Even though we did not conclude that rating is missing based on chance, it still is considered MAR, because it is dependent on the number of steps.
 
@@ -157,11 +157,11 @@ Building off the plot earlier when exploring the data, lets test whether the day
 
 Let's test whether the reviews after a certain point of the recipe being submitted have significantly lower mean ratings. Here, let's use a cutoff of 3 years after the recipe submission to see if there's a difference, based off the graph made previously. I have 'sliced up' this data by using the data to generate the hypothesis. To counteract this, I will require more evidence in order to reject the null hypothesis. 
 
-Alpha: 0.001 
+**Alpha**: 0.001 
 
-Null Hypothesis: Reviews submitted over 3 years after the recipe submitted have the same mean as all reviews 
+**Null Hypothesis**: Reviews submitted over 3 years after the recipe submitted have the same mean as all reviews 
 
-Alternate Hypothesis: Reviews submitted over 3 years after a recipe submitted do not have the same mean as all reviews
+**Alternate Hypothesis**: Reviews submitted over 3 years after a recipe submitted do not have the same mean as all reviews
 
 After simulating 10000 samples, we see these values
 
@@ -175,7 +175,7 @@ After simulating 10000 samples, we see these values
 Clearly, the value we observed is far greater than what we see by chance alone. Clearly, the p-value gives us a p-value of 0, indicating that none of the 10000 simulated statistics was as or more extreme than the observed value. Therefore, we reject the null hypothesis in favor of the alternate. Thus, we conclude that later reviews likely have a different true mean than the alternate hypothesis. Again, it is theoretically possible that this value did arise by chance alone.
 
 ## Framing a Prediction Problem
-Let's dive deeper into analyzing review behavior, this time trying to see if we can predict the average review rating based on the recipe with at least 8 reviews via regression.
+Let's dive deeper into analyzing review behavior, this time trying to see if we can predict the average review rating based on the recipe with at least 8 reviews via regression. The average review rating is potentially misleading, since review ratings are ordinal variables -- and I treat them as quantitative. However, it is the most reasonable way to aggregate review ratings.
 
 The average rating can be valuable to estimate. It can, for instance, help an algorithm choose which products will be better liked and recommend those products more.
 
@@ -231,6 +231,27 @@ Let's also encode ingredients in a different, likely better way, by encoding the
 Including these features along with time and minutes, and continuing with random forests led to the best validation results. Therefore, I ended up using them. I got a  higher test R^2 (0.0636) than the baseline model (0.0587), which indicates that the method generalizes better to unseen data. This improvement is likely because I included the reviewer's previous mean and counts, which are useful pieces of information, along with the title -- something that reviewers definitely check. Since I added these useful pieces of information and kept the number of features about the same by setting min_df, I was likely able to reduce bias, but keep variance about the same. This improved the model. In fact, the training R^2 increased -- which indicates that the new model did, indeed, reduce the bias.
 
 ## Fairness Analysis
+
+Let's test whether my model is fair towards new users. Is it worse at predicting new users scores than old users. Here, I will be comparing the Root Mean Squared Errors of recipe creators who have already had 20+ reviews (above median) vs those who have 19 or fewer (below median). 
+
+**Null Hypothesis**: Model is fair. Root Mean Squared Error values are equal for recipe creators who submitted more than 20 recipes in the past and people who submitted less than 20 recipes.
+
+**Alternate Hypothesis**: Model is unfair. Root Mean Squared Error values are lower for recipe creators who submitted less than 20 reviews than for those who submitted more than 20.
+
+**Alpha**: 0.01
+
+This is a graph of the data:
+
+<iframe
+  src="assets/fairness.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+Note that this graph is condensed to exclude rare cases of an error greater than 1 in order to make it easier to visualize. Seems like recipes without many previous ratings have a higher error, and are thus, worse off. This is in line with the alternate hypothesis that the model is unfair. Let's test for significance.
+
+After doing a permutation test with 10000 simulations, we get a p-value of 0.0007, which is below alpha. Therefore, we reject the null hypothesis for the alternate hypothesis and conclude that this model is significantly worse for new recipe creators than old ones.
 
 
 
