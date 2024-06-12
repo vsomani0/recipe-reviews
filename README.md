@@ -1,4 +1,4 @@
-# Recipe Reviews Data Analysis
+# Understanding Food Reviews Data Analysis
 This is an investigation into understanding and predicting reviews of food recipes. It is a project for DSC 80 (Applications of Data Science). 
 
 ## Introduction
