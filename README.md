@@ -65,7 +65,7 @@ Extremely helpful piece of information for the prediction later.
 This is how the cleaned dataframe looks:
 <iframe
   src="assets/df-head.png"
-  width="500"
+  width="550"
   height="300"
   frameborder="0"
 ></iframe>
@@ -76,8 +76,8 @@ I found several interesting visuals, including these ones:
 
 <iframe
   src="assets/number_of_reviews_by_year.html"
-  width="500"
-  height="600"
+  width="550"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -85,8 +85,8 @@ This shows the popularity of food.com reviews since 2008, and these peaked at ar
 
 <iframe
   src="assets/review_avg_by_time_plot.html"
-  width="500"
-  height="600"
+  width="550"
+  height="400"
   frameborder="0"
 ></iframe>
 
@@ -112,7 +112,7 @@ First, let's see if number of steps helps determines whether the column is missi
 
 <iframe
   src="assets/n_steps_missing.html"
-  width="500"
+  width="550"
   height="600"
   frameborder="0"
 ></iframe>
@@ -152,7 +152,7 @@ We get a p-value of 0.12, which is lower than the threshold. Thus, we fail to re
 Building off the plot earlier when exploring the data, lets test whether the days after a recipe is submitted affects the actual score of the review.
 <iframe
   src="assets/review_avg_by_time_plot.html"
-  width="500"
+  width="550"
   height="600"
   frameborder="0"
 ></iframe>
@@ -169,17 +169,17 @@ After simulating 10000 samples, we see these values
 
 <iframe
   src="assets/hyp_test.html"
-  width="500"
+  width="550"
   height="600"
   frameborder="0"
 ></iframe>
 
-Clearly, the value we observed is far greater than what we see by chance alone. Clearly, the p-value gives us a p-value of 0, indicating that none of the 10000 simulated statistics was as or more extreme than the observed value. Therefore, we reject the null hypothesis in favor of the alternate. Thus, we conclude that later reviews likely have a different true mean than the alternate hypothesis. Again, it is theoretically possible that this value did arise by chance alone.
+Clearly, the value we observed is far greater than what we see by chance alone. The simulated statistics are all on the left and the observed statistic is much larger. It should no surprise that we get a p-value of 0 when running the test, indicating that none of the 10000 simulated statistics was as or more extreme than the observed value. Therefore, we reject the null hypothesis in favor of the alternate. Thus, we conclude that later reviews likely have a different true mean than the alternate hypothesis. Again, it is theoretically possible that this value did arise by chance alone.
 
 ## Framing a Prediction Problem
-Let's dive deeper into analyzing review behavior, this time trying to see if we can predict the average review rating based on the recipe with at least 8 reviews via regression. The average review rating is potentially misleading, since review ratings are ordinal variables -- and I treat them as quantitative. However, it is the most reasonable way to aggregate review ratings.
+Let's dive deeper into analyzing review behavior, this time trying to see if we can predict the average review rating based on the recipe with at least 8 reviews via regression. The average review rating is potentially misleading, since review ratings are ordinal variables -- and I treat them as quantitative. However, it is the most reasonable way to aggregate review ratings, so I will use it.
 
-The average rating can be valuable to estimate. It can, for instance, help an algorithm choose which products will be better liked and recommend those products more.
+The average rating is invaluable to estimate. It can, for instance, greatly help an algorithm choose which products will be better liked and recommend those products more. However, it will likely pose a big challenge since predicting the quality of a recipe based largely on the text of its review and its title seems very difficult.
 
 This dataset is littered with products with very few reviews. If there are only one or two reviews on a product, it becames less valuable to estimate the average rating since it conveys only one consumers' estimate. It also becomes harder to estimate -- even an excellent model will struggle to estimate the average rating of a product with only one sample size. For instance, with a low sample size a food item may be really good, but the one reviewer happened to dislike it. Therefore, to make the predictions both more informative and reward a good model more, let me set the cutoff to 8 reviews. This still leaves us with a nice sample size of about 3500 recipes.
 
@@ -215,7 +215,7 @@ I divide the model into a test and a training set (with 80% of the data in the t
 
 <iframe
   src="assets/validation_r2_baseline.html"
-  width="750"
+  width="550"
   height="600"
   frameborder="0"
 ></iframe>
@@ -230,7 +230,9 @@ Let's use the countvectorizer to encode the title in this, too. In order to not 
 
 Let's also encode ingredients in a different, likely better way, by encoding the full ingredient -- rather than just a part of it. This allows more direct comparisons (for instance, black beans only gets compared to other black beans, and not other black items as well as other beans). In order to not get too many features, I again set a minimum occurences to not have the model consider extremely uncommon or mispelled ingredients.
 
-Including these features along with time and minutes, and continuing with random forests led to the best validation results. Therefore, I ended up using them. I got a  higher test R^2 (0.0636) than the baseline model (0.0587), which indicates that the method generalizes better to unseen data. This improvement is likely because I included the reviewer's previous mean and counts, which are useful pieces of information, along with the title -- something that reviewers definitely check. Since I added these useful pieces of information and kept the number of features about the same by setting min_df, I was likely able to reduce bias, but keep variance about the same. This improved the model. In fact, the training R^2 increased -- which indicates that the new model did, indeed, reduce the bias.
+Including these features along with time and minutes, and continuing with random forests led to the best validation results. Therefore, I ended up using them. I got a  higher test R^2 (0.0636) than the baseline model (0.0587), which indicates that the method generalizes better to unseen data. This improvement is likely because I included the reviewer's previous mean and counts, which are useful pieces of information, along with the title -- something that reviewers definitely check. Since I added these useful pieces of information and kept the number of features about the same by setting min_df, I was likely able to reduce bias, but keep variance about the same. This improved the model. In fact, the training R-Squared increased -- which indicates that the new model did, indeed, reduce the bias.
+
+However, an R-Squared of 0.0636 is not seemingly impressive. It means that this model did only 6.3% better than a model that predicted the mean review every time. A lot of this is unsurprising: attempting to understand how good a recipe is based largely on the words inputted is not easy, and our model should struggle. In the future, more sophisticated word-processing like NLP may improve prediction accuracies.
 
 ## Fairness Analysis
 
@@ -246,14 +248,14 @@ This is a graph of the data:
 
 <iframe
   src="assets/fairness.html"
-  width="500"
+  width="550"
   height="600"
   frameborder="0"
 ></iframe>
 
 Note that this graph is condensed to exclude rare cases of an error greater than 1 in order to make it easier to visualize. Seems like recipes without many previous ratings have a higher error, and are thus, worse off. This is in line with the alternate hypothesis that the model is unfair. Let's test for significance.
 
-After doing a permutation test with 10000 simulations, we get a p-value of 0.0007, which is below alpha. Therefore, we reject the null hypothesis for the alternate hypothesis and conclude that this model is significantly worse for new recipe creators than old ones.
+After doing a permutation test with 10000 simulations, we get a p-value of 0.0007, which is below alpha. Therefore, we reject the null hypothesis for the alternate hypothesis and conclude that this model is significantly worse for new recipe creators than old ones. If predicting 
 
 
 
