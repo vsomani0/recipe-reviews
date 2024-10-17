@@ -1,6 +1,6 @@
 remote_theme: pages-themes/leap-day@v0.2.0
 
-title: Food Reviews Data Analysis
-description: This is a project where I investigate recipe reviews using hypothesis tests and machine learning-based predictions.
+title: Recipe Reviews Data Analysis
+description: An analysis of reviews of recipes using machine learning predictions and other data exploration.
 plugins:
   - jekyll-remote-theme

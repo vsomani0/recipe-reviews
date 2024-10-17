@@ -1,13 +1,12 @@
-# Understanding Food Reviews Data Analysis
-This is an investigation into understanding and predicting reviews of food recipes. It is a project for DSC 80 (Applications of Data Science). 
-
+# Recipe Reviews Data Analysis
+GitHub Pages URL: https://vsomani0.github.io/recipe-reviews/.
 ## Introduction
 
  Reviews are becoming a more and more important part of today's world, where items from movies to restaurants to almost any product are getting reviewed. I really wanted to do something from analyzing reviews, to examine how the behavior changes by time. A research paper has scraped hundreds of thousands of reviews on food.com since 2008, and that is perfect for this. 
 
-Overall, I analyze reviews in depth whether later reviews are significantly more positive or negative than earlier reviews, in order to get a better feel for reviewer behavior.  Then, I will see how well we can use this better information about reviews to see if I can predict a recipe's average rating, with only using knowledge beforehand (such as the creator of a recipe, its ingredients etc).
+Overall, I will analyze reviews in depth whether later reviews are significantly more positive or negative than earlier reviews, in order to get a better feel for reviewer behavior.  Then, I will see how well we can use this better information about reviews to see if I can predict a recipe's average rating, with only using knowledge beforehand (such as the creator of a recipe, its ingredients etc).
 
-This dataset is split up into two separate pieces of data -- recipes and reviews. First of all, we have the recipes dataframe, which has one element for every rating since 2008.  In total, it has 83782 rows, representing 83782 recipes, by 5 columns (shown below).
+This dataset is split up into two separate pieces of data -- recipes and reviews. First of all, we have the recipes dataframe, which has one element for every rating since 2008.  In total, it has 83782 rows, representing 83782 recipes, by 10 columns (shown below).
 
 | Column Name | Type |
 | ----------- | ----------- |
